@@ -3,6 +3,15 @@ using System.Linq;
 
 namespace Homework4Review
 {
+
+    public enum Seasons
+    {
+        Winter,
+        Spring,
+        Summer,
+        Autumn
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -95,24 +104,95 @@ namespace Homework4Review
             // Можно:
             // 1. написать несклько условий
             // 2. использовать проваливание операторов switch case. См.: https://docs.microsoft.com/ru-ru/dotnet/csharp/language-reference/keywords/switch#the-switch-section
+            // 3. Использовать новый более свежий синтаксический сахар конструкции switch
 
-            // Так как первый вариант более очевидный - расмотрим второй
+            // в методах GetSeasonsVariable1 GetSeasonsVariable2 и GetSeasonsVariable3 приведены примеры использования всех трех вариантов:
+
+
             int number = 3;
-
-            switch (number)
+            try
             {
-                case 1:
-                case 2:
-                    Console.WriteLine("Зима");
-                    break;
-                case 3: // Если после оператора case не идет оператор break; то выполнение кода будет проваливаться до первого его появления
-                case 4:
-                    Console.WriteLine("Весна");
-                    break;
-                default:
-                    Console.WriteLine("Ошибка ввода");
-                    break;
+                Console.WriteLine($"Месяц {number} - это {GetSeasonsVariable3(number)}");
             }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+
+
+        }
+
+        public static Seasons GetSeasonsVariable1(int montheNumber)
+        {
+            if (montheNumber >= 1 && montheNumber <= 12)
+            {
+                if (montheNumber <= 2 || montheNumber == 12)
+                    return Seasons.Winter;
+                else if (montheNumber >= 3 && montheNumber <= 5)
+                    return Seasons.Spring;
+                else if (montheNumber >= 6 && montheNumber <= 8)
+                    return Seasons.Summer;
+                else if (montheNumber >= 9 && montheNumber <= 11)
+                    return Seasons.Autumn;
+            }
+            throw new Exception($"Вы ввели некоректное число ({montheNumber}), нужно от 1 до 12!");
+        }
+
+        public static Seasons GetSeasonsVariable2(int montheNumber)
+        {
+            switch (montheNumber)
+            {
+                case 1: // Если после оператора case не идет оператор break; то выполнение кода будет проваливаться до первого его появления
+                case 2:
+                case 12:
+                    return Seasons.Winter;
+                case 3:
+                case 4:
+                case 5:
+                    return Seasons.Spring;
+                case 6:
+                case 7:
+                case 8:
+                    return Seasons.Summer;
+                case 9:
+                case 10:
+                case 11:
+                    return Seasons.Summer;
+                default:
+                    throw new Exception($"Вы ввели некоректное число ({montheNumber}), нужно от 1 до 12!");
+            }
+        }
+
+        public static Seasons GetSeasonsVariable3(int montheNumber)
+        {
+            var selectedSeason = montheNumber switch
+            {
+                /*
+                 * Этот код работает только наичная с .NET 5
+                 * 
+                 * 1 or 2 or 12 => Seasons.Winter,
+                 * 3 or 4 or 5 => Seasons.Spring,
+                 * 6 or 7 or 8 => Seasons.Summer,
+                 * 9 or 10 or 11 => Seasons.Autumn,
+                 * 
+                 */
+
+                1 => Seasons.Winter,
+                2 => Seasons.Winter,
+                3 => Seasons.Spring,
+                4 => Seasons.Spring,
+                5 => Seasons.Spring,
+                6 => Seasons.Summer,
+                7 => Seasons.Summer,
+                8 => Seasons.Summer,
+                9 => Seasons.Autumn,
+                10 => Seasons.Autumn,
+                11 => Seasons.Autumn,
+                12 => Seasons.Winter,
+                _ => throw new Exception($"Вы ввели некоректное число ({montheNumber}), нужно от 1 до 12!") // Если ввели число за пределами 1-12 - выбрасываем исключение с ссобщением
+            };
+            return selectedSeason;
         }
     }
 }
